@@ -35,6 +35,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  flutter_onboard: ^2.0.0
+  dot_navigation_bar: ^1.0.2
+
 
 dev_dependencies:
   flutter_test:
@@ -59,9 +62,44 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    #  - assets/gambar/logo.png
+    #  - assets/gambar/onboarding1.png
+    #  - assets/gambar/rafiki.png
+    #  - assets/gambar/cuate.png
+    #  - assets/gambar/rafiki1.png
+    #  - assets/gambar/StudyTeach.png
+    #  - assets/gambar/roket.png
+    #  - assets/gambar/amico.png
+    #  - assets/gambar/Avatar.png
+    #  - assets/gambar/Avatar1.png
+    #  - assets/gambar/Avatar2.png
+    #  - assets/gambar/Avatar3.png
+    #  - assets/gambar/container1.png
+    #  - assets/gambar/gambar1.png
+    #  - assets/gambar/gambar2.png
+    #  - assets/gambar/profile.png
+    #  - assets/gambar/soal1.png
+    #  - assets/gambar/signin.png
+    #  - assets/icons/google.png
+    #  - assets/icons/ellips1.png
+    #  - assets/icons/ellips2.png
+    #  - assets/icons/Layout.png
+    #  - assets/icons/waving.png
+    #  - assets/icons/fisika.png
+    #  - assets/icons/eng.png
+    #  - assets/icons/kimia.png
+    #  - assets/icons/mtk.png
+    #  - assets/icons/icon-notif.png
+    #  - assets/icons/icon-notif1.png
+    #  - assets/icons/instagram.png
+    #  - assets/icons/twitter.png
+    #  - assets/icons/youtube.png
+    #  - assets/icons/math.png
+    - assets/gambar/
+    - assets/icons/
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

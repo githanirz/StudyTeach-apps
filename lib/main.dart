@@ -1,125 +1,254 @@
 import 'package:flutter/material.dart';
+import 'package:studytech_apps/screen_page/Artikel_Materi.dart';
+import 'package:studytech_apps/screen_page/page_contohsoal.dart';
+import 'package:studytech_apps/screen_page/page_detail_homepage.dart';
+import 'package:studytech_apps/screen_page/page_homepage.dart';
+import 'package:studytech_apps/screen_page/page_homescreen.dart';
+import 'package:studytech_apps/screen_page/page_notifikasi.dart';
+import 'package:studytech_apps/screen_page/page_profil.dart';
+import 'package:studytech_apps/screen_page/page_robotsoal.dart';
+import 'package:studytech_apps/screen_page/page_soalterdeteksi.dart';
+import 'package:studytech_apps/screen_page/splashscreen.dart';
+import 'package:flutter_onboard/flutter_onboard.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'StudyTeach_apps',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: SplashScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class OnboardingScreen extends StatelessWidget {
+  final PageController _pageController = PageController();
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/gambar/onboarding1.png',
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: OnBoard(
+              pageController: _pageController,
+              onSkip: () {
+                print('skipped');
+              },
+              onDone: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PageHomeScreen()), // Navigate to PageHomeScreen after onboarding is done
+                );
+              },
+              onBoardData: onBoardData,
+              titleStyles: const TextStyle(
+                color: Colors.white,
+                fontSize: 36,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.15,
+              ),
+              descriptionStyles: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+              pageIndicatorStyle: const PageIndicatorStyle(
+                width: 100,
+                inactiveColor: Colors.white,
+                activeColor: Colors.white,
+                inactiveSize: Size(8, 8),
+                activeSize: Size(12, 12),
+              ),
+              skipButton: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => PageHomeScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Skip",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              nextButton: OnBoardConsumer(
+                builder: (context, ref, child) {
+                  final state = ref.watch(onBoardStateProvider);
+                  return InkWell(
+                    onTap: () => _onNextTap(context, state),
+                    child: Container(
+                      width: 230,
+                      height: 50,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF7EC9F5), Color(0xFF3957ED)],
+                        ),
+                      ),
+                      child: Text(
+                        state.isLastPage ? "Selesai" : "Selanjutnya",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onNextTap(BuildContext context, OnBoardState onBoardState) {
+    if (!onBoardState.isLastPage) {
+      _pageController.animateToPage(
+        onBoardState.page + 1,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOutSine,
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PageHomeScreen(),
+        ),
+      );
+    }
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+final List<OnBoardModel> onBoardData = [
+  OnBoardModel(
+    title: 'Selamat Datang',
+    description:
+        'Saat kau terpuruk, percayalah bahwa ilmu yang sudah dipelajari akan berarti kemudian hari.',
+    imgUrl: 'assets/gambar/StudyTeach.png',
+  ),
+  OnBoardModel(
+    title: 'Selamat Datang',
+    description:
+        'Raihlah ilmu dan untuk meraih ilmu, belajarlah untuk tenang dan sabar.',
+    imgUrl: 'assets/gambar/StudyTeach.png',
+  ),
+  OnBoardModel(
+    title: 'Selamat Datang',
+    description:
+        'Saat dirimu menghadapi perubahan, percayalah ada yang selalu membantu.',
+    imgUrl: 'assets/gambar/StudyTeach.png',
+  ),
+];
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+class Navigation extends StatefulWidget {
+  final int initialIndex; // Tambahkan initialIndex
+  const Navigation({Key? key, this.initialIndex = 0}) : super(key: key);
+
+  @override
+  State<Navigation> createState() => _NavigationState();
+}
+
+class _NavigationState extends State<Navigation> {
+  int _currentIndex = 0;
+  final List<Widget> screen = [
+    const HomePage(),
+    const PageArtikel_Materi(),
+    const Pagenotifikasi(),
+    const RobotSoal(),
+    const PageProfile()
+  ];
+
+  @override
+  void initState() {
+    // Atur currentIndex sesuai dengan initialIndex saat inisialisasi
+    _currentIndex = widget.initialIndex;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: screen,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 0;
+                });
+              },
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            IconButton(
+              icon: Icon(Icons.book),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 1;
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.notifications_active_outlined),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 2;
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.lightbulb_outline),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 3;
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 4;
+                });
+              },
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
